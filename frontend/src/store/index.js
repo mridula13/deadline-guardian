@@ -2,7 +2,9 @@ import { create } from 'zustand'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-const API = '/api/tasks'
+const BASE_URL = import.meta.env.VITE_API_URL
+
+const API = `${BASE_URL}/api/tasks`
 
 export const useTaskStore = create((set, get) => ({
   tasks: [],
@@ -127,7 +129,7 @@ export const useReminderStore = create((set) => ({
 
   fetchReminders: async () => {
     try {
-      const { data } = await axios.get('/api/reminders')
+      const { data } = await axios.get('`${BASE_URL}/api/reminders`')
       const unread = data.data.filter(r => !r.read).length
       set({ reminders: data.data, unreadCount: unread })
     } catch (err) {
@@ -137,7 +139,7 @@ export const useReminderStore = create((set) => ({
 
   fetchDueReminders: async () => {
     try {
-      const { data } = await axios.get('/api/reminders/due')
+      const { data } = await axios.get('`${BASE_URL}/api/reminders`/due')
       if (data.data.length > 0) {
         // Trigger browser notifications if permitted
         data.data.forEach(r => {
@@ -151,7 +153,7 @@ export const useReminderStore = create((set) => ({
 
   markRead: async (id) => {
     try {
-      await axios.patch(`/api/reminders/${id}/read`)
+      await axios.patch(``${BASE_URL}/api/reminders`/${id}/read`)
       set(state => ({
         reminders: state.reminders.map(r => r._id === id ? { ...r, read: true } : r),
         unreadCount: Math.max(0, state.unreadCount - 1),
@@ -161,7 +163,7 @@ export const useReminderStore = create((set) => ({
 
   markAllRead: async () => {
     try {
-      await axios.patch('/api/reminders/read-all')
+      await axios.patch('`${BASE_URL}/api/reminders`/read-all')
       set(state => ({
         reminders: state.reminders.map(r => ({ ...r, read: true })),
         unreadCount: 0,
